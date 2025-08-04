@@ -1,4 +1,4 @@
-import { SignUpCard } from "../components/sign-up-card";
+import { SignUpCard } from "../../../features/auth/components/sign-up-card";
 
 const SignUpPage = async () => {
   return <SignUpCard />;
