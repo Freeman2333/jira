@@ -5,8 +5,16 @@ import { loginSchema, signupSchema } from "../schemas";
 import { createAdminClient } from "@/lib/appwrite";
 import { ID } from "node-appwrite";
 import { AUTH_COOKIE } from "../constants";
+import { sessionMiddleware } from "@/lib/session-middleware";
 
 const app = new Hono()
+  .get("/current", sessionMiddleware, (c) => {
+    const user = c.get("user");
+
+    return c.json({
+      data: user,
+    });
+  })
   .post("/register", zValidator("json", signupSchema), async (c) => {
     const { email, name, password } = c.req.valid("json");
 
