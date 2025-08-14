@@ -1,4 +1,4 @@
-import { getWorkspace } from "@/app/(dashboard)/queries";
+import { getWorkspace } from "@/features/workspaces/queries";
 import { getCurrent } from "@/features/auth/queries";
 import EditWorkspaceForm from "@/features/workspaces/components/edit-workspace-form";
 import { redirect } from "next/navigation";
