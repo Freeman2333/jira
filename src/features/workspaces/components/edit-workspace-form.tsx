@@ -25,10 +25,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Workspace } from "../types";
-import { useUpdateWorkspace } from "../api/use-update-workspace";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useDeleteWorkspace } from "../api/use-delete-workspace";
 import { useResetInviteCode } from "../api/use-reset-invite-code";
+import { useUpdateWorkspace } from "../api/use-update-workspace";
 
 interface EditWorkspaceFormProps {
   onCancel?: () => void;
@@ -122,8 +122,11 @@ const EditWorkspaceForm = ({
       form.setValue("image", file);
     }
   };
+  let fullInviteLink = "";
 
-  const fullInviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
+  if (typeof window !== "undefined") {
+    fullInviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
+  }
 
   const handleCopyInviteLink = () => {
     navigator.clipboard
