@@ -4,10 +4,12 @@ import Navbar from "@/components/navbar";
 import Sidebar from "@/components/sidebar";
 import { CreateWorkspaceModal } from "@/features/workspaces/components/create-workspace-modal";
 import { CreateProjectModal } from "@/features/projects/components/create-project-modal";
+import { CreateTaskModal } from "@/features/tasks/components/create-task-modal";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen">
+      <CreateTaskModal />
       <CreateWorkspaceModal />
       <CreateProjectModal />
       <div className="flex w-full h-full">
