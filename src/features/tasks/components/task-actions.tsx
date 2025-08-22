@@ -12,6 +12,7 @@ import {
 import { useDeleteTask } from "../api/use-delete-task";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useEditTaskModal } from "../hooks/use-edit-task-modal";
 
 interface TaskActionsProps {
   id: string;
@@ -22,6 +23,8 @@ interface TaskActionsProps {
 export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
+
+  const { open } = useEditTaskModal();
 
   const { mutate: deleteTask, isPending: isDeletingTask } = useDeleteTask();
 
@@ -70,7 +73,9 @@ export const TaskActions = ({ id, projectId, children }: TaskActionsProps) => {
             Open Project
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => {}}
+            onClick={() => {
+              open(id);
+            }}
             disabled={false}
             className="font-medium p-[10px]"
           >

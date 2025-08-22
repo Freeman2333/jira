@@ -215,6 +215,114 @@ const app = new Hono()
     await databases.deleteDocument(DATABASE_ID, TASKS_ID, taskId);
 
     return c.json({ data: { $id: taskId } });
-  });
+  })
+  .patch(
+    "/:taskId",
+    sessionMiddleware,
+    zValidator("json", createTaskSchema.partial()),
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const {
+        name,
+        status,
+        workspaceId,
+        projectId,
+        dueDate,
+        assigneeId,
+        description,
+      } = c.req.valid("json");
+
+      const { taskId } = c.req.param();
+
+      const existingTask = await databases.getDocument<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        taskId
+      );
+
+      const member = await getMember({
+        databases,
+        workspaceId: existingTask.workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const task = await databases.updateDocument(
+        DATABASE_ID,
+        TASKS_ID,
+        existingTask.$id,
+        {
+          name,
+          status,
+          workspaceId,
+          projectId,
+          dueDate,
+          assigneeId,
+          description,
+        }
+      );
+
+      return c.json({ data: task });
+    }
+  )
+  .get(
+    "/:taskId",
+    sessionMiddleware,
+    zValidator(
+      "param",
+      z.object({
+        taskId: z.string(),
+      })
+    ),
+    async (c) => {
+      const { users } = await createAdminClient();
+      const databases = c.get("databases");
+      const currentUser = c.get("user");
+
+      const { taskId } = c.req.valid("param");
+
+      const task = await databases.getDocument<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        taskId
+      );
+
+      const currentMember = await getMember({
+        databases,
+        workspaceId: task.workspaceId,
+        userId: currentUser.$id,
+      });
+
+      if (!currentMember) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const project = await databases.getDocument<Project>(
+        DATABASE_ID,
+        PROJECTS_ID,
+        task.projectId
+      );
+
+      const member = await databases.getDocument(
+        DATABASE_ID,
+        MEMBERS_ID,
+        task.assigneeId
+      );
+
+      const user = await users.get(member.userId);
+
+      const assignee = {
+        ...member,
+        name: user.name,
+        email: user.email,
+      };
+
+      return c.json({ data: { ...task, project, assignee } });
+    }
+  );
 
 export default app;
