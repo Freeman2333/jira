@@ -33,6 +33,7 @@ import {
 import { createTaskSchema } from "../schemas";
 import { useCreateTask } from "../api/use-create-task";
 import { TaskStatus } from "../types";
+import { useCreateTaskModal } from "../hooks/use-create-task-modal";
 
 interface CreateTaskFormProps {
   onCancel?: () => void;
@@ -46,6 +47,8 @@ export const CreateTaskForm = ({
   onCancel,
 }: CreateTaskFormProps) => {
   const workspaceId = useWorkspaceId();
+  const { taskStatus } = useCreateTaskModal();
+
   const { mutate, isPending } = useCreateTask();
 
   const schemaWithoutWorkspace = createTaskSchema.omit({ workspaceId: true });
@@ -54,6 +57,7 @@ export const CreateTaskForm = ({
     resolver: zodResolver(schemaWithoutWorkspace),
     defaultValues: {
       name: "",
+      status: taskStatus ?? TaskStatus.TODO,
     },
   });
 

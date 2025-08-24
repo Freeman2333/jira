@@ -48,7 +48,7 @@ export const TaskViewSwitcher = () => {
               Calendar
             </TabsTrigger>
           </TabsList>
-          <Button onClick={open} size="sm" className="w-full lg:w-auto">
+          <Button onClick={() => open()} size="sm" className="w-full lg:w-auto">
             <PlusIcon className="size-4 mr-2" />
             New
           </Button>
