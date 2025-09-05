@@ -57,7 +57,6 @@ export const EditTaskForm = ({
     resolver: zodResolver(schemaWithoutWorkspace),
     defaultValues: initialValues,
   });
-  console.log({ form });
 
   const onSubmit = (values: z.infer<typeof schemaWithoutWorkspace>) => {
     mutate(

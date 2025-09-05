@@ -161,7 +161,7 @@ const app = new Hono()
         [
           Query.equal("status", status),
           Query.equal("workspaceId", workspaceId),
-          Query.orderAsc("position"),
+          Query.orderDesc("position"),
           Query.limit(1),
         ]
       );
@@ -322,6 +322,78 @@ const app = new Hono()
       };
 
       return c.json({ data: { ...task, project, assignee } });
+    }
+  )
+  .post(
+    "/bulk-update",
+    sessionMiddleware,
+    zValidator(
+      "json",
+      z.object({
+        tasks: z.array(
+          z.object({
+            $id: z.string(),
+            status: z.enum(Object.values(TaskStatus)),
+            position: z.number().int().positive().min(1000).max(1_000_000),
+          })
+        ),
+      })
+    ),
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const { tasks } = await c.req.valid("json");
+
+      const taskToUpdate = await databases.listDocuments<Task>(
+        DATABASE_ID,
+        TASKS_ID,
+        [
+          Query.contains(
+            "$id",
+            tasks.map((task) => task.$id)
+          ),
+        ]
+      );
+
+      const workspaceIds = new Set(
+        taskToUpdate.documents.map((task) => task.workspaceId as string)
+      );
+
+      if (workspaceIds.size !== 1) {
+        return c.json(
+          { error: "All tasks must belong to the same workspace." },
+          400
+        );
+      }
+
+      const workspaceId = workspaceIds.values().next().value;
+
+      const member = await getMember({
+        databases,
+        workspaceId: workspaceId!,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const updatedTasks = await Promise.all(
+        tasks.map(async (task) => {
+          return databases.updateDocument(
+            DATABASE_ID,
+            TASKS_ID,
+            task.$id,
+            {
+              status: task.status,
+              position: task.position,
+            },
+            []
+          );
+        })
+      );
+
+      return c.json({ data: updatedTasks });
     }
   );
 
