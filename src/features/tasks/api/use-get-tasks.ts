@@ -10,7 +10,7 @@ interface UseGetTasksProps {
   assigneeId?: string | null;
   dueDate?: string | null;
   search?: string | null;
-  limit?: number | null;
+  limit?: string | null;
 }
 
 export const useGetTasks = ({
@@ -42,8 +42,7 @@ export const useGetTasks = ({
           assigneeId: assigneeId ?? undefined,
           dueDate: dueDate ?? undefined,
           search: search ?? undefined,
-          limit:
-            limit !== null && limit !== undefined ? String(limit) : undefined,
+          limit: limit ?? undefined,
         },
       });
 

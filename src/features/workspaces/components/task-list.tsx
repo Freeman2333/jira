@@ -17,7 +17,7 @@ const TASK_LIMIT = 2;
 export const TaskList = ({ workspaceId }: { workspaceId: string }) => {
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
-    limit: TASK_LIMIT,
+    limit: String(TASK_LIMIT),
   });
   const { open: createTask } = useCreateTaskModal();
 

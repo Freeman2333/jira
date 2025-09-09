@@ -26,7 +26,7 @@ const app = new Hono()
         status: z.nativeEnum(TaskStatus).nullish(),
         search: z.string().nullish(),
         dueDate: z.string().nullish(),
-        limit: z.number().nullish(),
+        limit: z.string().nullish(),
       })
     ),
     async (c) => {
@@ -86,7 +86,7 @@ const app = new Hono()
 
       if (limit) {
         console.log("limit: ", limit);
-        query.push(Query.limit(limit));
+        query.push(Query.limit(+limit));
       }
 
       const tasks = await databases.listDocuments<Task>(
