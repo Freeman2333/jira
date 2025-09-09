@@ -12,7 +12,6 @@ import { TaskDescription } from "@/features/tasks/components/task-description";
 export const TaskIdClient = () => {
   const taskId = useTaskId();
   const { data, isLoading } = useGetTask({ taskId });
-  console.log({ data });
 
   if (isLoading) {
     return <PageLoader />;
