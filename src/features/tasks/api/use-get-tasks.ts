@@ -10,6 +10,7 @@ interface UseGetTasksProps {
   assigneeId?: string | null;
   dueDate?: string | null;
   search?: string | null;
+  limit?: number | null;
 }
 
 export const useGetTasks = ({
@@ -19,6 +20,7 @@ export const useGetTasks = ({
   assigneeId,
   dueDate,
   search,
+  limit,
 }: UseGetTasksProps) => {
   const query = useQuery({
     queryKey: [
@@ -29,6 +31,7 @@ export const useGetTasks = ({
       assigneeId,
       dueDate,
       search,
+      limit,
     ],
     queryFn: async () => {
       const res = await client.api.tasks["$get"]({
@@ -39,6 +42,8 @@ export const useGetTasks = ({
           assigneeId: assigneeId ?? undefined,
           dueDate: dueDate ?? undefined,
           search: search ?? undefined,
+          limit:
+            limit !== null && limit !== undefined ? String(limit) : undefined,
         },
       });
 

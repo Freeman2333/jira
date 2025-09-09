@@ -26,6 +26,7 @@ const app = new Hono()
         status: z.nativeEnum(TaskStatus).nullish(),
         search: z.string().nullish(),
         dueDate: z.string().nullish(),
+        limit: z.number().nullish(),
       })
     ),
     async (c) => {
@@ -33,8 +34,15 @@ const app = new Hono()
       const databases = c.get("databases");
       const user = c.get("user");
 
-      const { workspaceId, projectId, assigneeId, status, search, dueDate } =
-        c.req.valid("query");
+      const {
+        workspaceId,
+        projectId,
+        assigneeId,
+        status,
+        search,
+        dueDate,
+        limit,
+      } = c.req.valid("query");
 
       const member = await getMember({
         databases,
@@ -74,6 +82,11 @@ const app = new Hono()
       if (search) {
         console.log("search: ", search);
         query.push(Query.search("name", search));
+      }
+
+      if (limit) {
+        console.log("limit: ", limit);
+        query.push(Query.limit(limit));
       }
 
       const tasks = await databases.listDocuments<Task>(
