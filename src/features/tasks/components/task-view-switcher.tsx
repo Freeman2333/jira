@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCreateTaskModal } from "../hooks/use-create-task-modal";
 import { useTaskFilters } from "../hooks/use-tasks-filter";
 import { useGetTasks } from "../api/use-get-tasks";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { useProjectId } from "@/features/workspaces/hooks/use-project-id";
 import { DataFilters } from "./data-filters";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
@@ -17,6 +17,7 @@ import { DataKanban } from "./data-kanban";
 import { useBulkUpdateTasks } from "../api/use-bulk-update-task";
 import { TaskStatus } from "../types";
 import { DataCalendar } from "./data-calendar";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 interface TaskViewSwitcherProps {
   hideProjectFilter?: boolean;
@@ -30,9 +31,11 @@ export const TaskViewSwitcher = ({
   const { mutate: bulkUpdate } = useBulkUpdateTasks();
 
   const workspaceId = useWorkspaceId();
+  const paramProjectId = useProjectId();
+
   const { data: tasks, isLoading: isLoadingTasks } = useGetTasks({
     workspaceId,
-    projectId,
+    projectId: projectId || paramProjectId,
     assigneeId,
     status,
     dueDate,

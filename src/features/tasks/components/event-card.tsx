@@ -8,10 +8,11 @@ import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
 import { TaskStatus } from "../types";
 import { Project } from "@/features/projects/type";
+import { Member } from "@/features/members/types";
 
 interface EventCardProps {
   title: string;
-  assignee: any;
+  assignee: Member;
   project: Project;
   status: TaskStatus;
   id: string;

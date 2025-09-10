@@ -105,7 +105,10 @@ export const CreateTaskForm = ({
                   <FormItem>
                     <FormLabel>Due Date</FormLabel>
                     <FormControl>
-                      <DatePicker {...field} />
+                      <DatePicker
+                        {...field}
+                        value={field.value as Date | undefined}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
