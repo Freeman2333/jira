@@ -20,6 +20,7 @@ import { loginSchema } from "../schemas";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useLogin } from "../api/use-login";
+import { signUpWithGithub, signUpWithGoogle } from "@/lib/server/oauth";
 
 export const SignInCard = () => {
   const { mutate, isPending } = useLogin();
@@ -90,6 +91,7 @@ export const SignInCard = () => {
       </div>
       <CardContent className="p-7 flex flex-col gap-y-4">
         <Button
+          onClick={() => signUpWithGoogle()}
           disabled={isPending}
           variant="secondary"
           size="lg"
@@ -100,6 +102,7 @@ export const SignInCard = () => {
         </Button>
         <Button
           disabled={isPending}
+          onClick={() => signUpWithGithub()}
           variant="secondary"
           size="lg"
           className="w-full"
